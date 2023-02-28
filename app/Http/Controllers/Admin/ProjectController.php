@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -31,8 +32,9 @@ class ProjectController extends Controller
     public function create()
     {
         $project = new Project();
+        $types = Type::all();
 
-        return view('admin.projects.create', compact('project'));
+        return view('admin.projects.create', compact('project', 'types'));
     }
 
     /**
@@ -47,7 +49,8 @@ class ProjectController extends Controller
             'title' => 'required|string|min:5|max:40|unique:projects',
             'thumbnail' => 'required|image',
             'description' => 'required|string|min:50|max:300',
-            'creation_date' => 'required|date'
+            'creation_date' => 'required|date',
+            'type_id' => 'required|exists:types,id'
         ]);
         $data['slug'] = Str::slug($data['title']);
         $data['thumbnail'] = Storage::put('imgs/', $data['thumbnail']);
@@ -80,7 +83,8 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'));
+        $types = Type::all();
+        return view('admin.projects.edit', compact('project', 'types'));
     }
 
     /**
@@ -96,7 +100,8 @@ class ProjectController extends Controller
             'title' => ['required', 'string', 'min:5', 'max:40', Rule::unique('projects')->ignore($project->id)],
             'thumbnail' => 'required|image',
             'description' => 'required|string|min:50|max:300',
-            'creation_date' => 'required|date|before_or_equal:today'
+            'creation_date' => 'required|date|before_or_equal:today',
+            'type_id' => 'required|exists:types,id'
         ]);
         $data['slug'] = Str::slug($data['title']);
         if ($request->hasFile('thumbnail')) {

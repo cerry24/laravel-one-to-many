@@ -3,6 +3,17 @@
     @method($method)
 
     <div class="mb-3">
+        <label for="input-type" class="form-label">Type</label>
+        <select class="form-control" name="type_id" id="input-type">
+            @foreach ($types as $type)
+                <option value="{{ $type->id }}" {{ old('type_id', $project->type_id) == $type->id ? 'selected' : '' }}>
+                    {{ $type->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="mb-3">
         <label for="input-title" class="form-label">Title</label>
         <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title', $project->title) }}" id="input-title">
         @error('title')
